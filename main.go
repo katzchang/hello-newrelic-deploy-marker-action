@@ -23,7 +23,7 @@ func main() {
 	insightAccountID := os.Getenv("NEW_RELIC_ACCOUNT_ID")
 	insightInsertKey := os.Getenv("NEW_RELIC_INSIGHTS_INSERT_KEY")
 
-	client := insights.NewInsertClient(insightInsertKey, insightAccountID)
+	client := insights.NewInsertClient(insightInsertKey, "")
 
 	log.SetLevel(log.DebugLevel) // TODO
 
