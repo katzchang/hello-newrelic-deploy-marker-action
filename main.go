@@ -41,6 +41,7 @@ func main() {
 
 		if postErr := client.PostEvent(testData); postErr != nil {
 			log.Errorf("Error: %v\n", postErr)
+			w.WriteHeader(500)
 		}
 	}
 
