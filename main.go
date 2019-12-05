@@ -20,7 +20,7 @@ func main() {
 	if err != nil {
 		log.Error(err)
 	}
-	insightAccountID := os.Getenv("NEW_RELIC_ACCOUNT_ID")
+	_ = os.Getenv("NEW_RELIC_ACCOUNT_ID")
 	insightInsertKey := os.Getenv("NEW_RELIC_INSIGHTS_INSERT_KEY")
 
 	client := insights.NewInsertClient(insightInsertKey, "")
