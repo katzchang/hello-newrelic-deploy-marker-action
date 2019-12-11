@@ -1,12 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"github.com/newrelic/go-agent"
 	insights "github.com/newrelic/go-insights/client"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 type TestType struct {
@@ -15,7 +16,7 @@ type TestType struct {
 }
 
 func main() {
-	config := newrelic.NewConfig("オーサムアプリケーション", os.Getenv("NEW_RELIC_LICENSE_KEY"))
+	config := newrelic.NewConfig("My Awesome Application", os.Getenv("NEW_RELIC_LICENSE_KEY"))
 	app, err := newrelic.NewApplication(config)
 	if err != nil {
 		log.Error(err)
@@ -23,19 +24,25 @@ func main() {
 	_ = os.Getenv("NEW_RELIC_ACCOUNT_ID")
 	insightInsertKey := os.Getenv("NEW_RELIC_INSIGHTS_INSERT_KEY")
 
-	client := insights.NewInsertClient(insightInsertKey, "")
+	client := insights.NewInsertClient(insightInsertKey, os.Getenv("NEW_RELIC_ACCOUNT_ID"))
 
 	log.SetLevel(log.DebugLevel) // TODO
 
 	if validationErr := client.Validate(); validationErr != nil {
-		//however it is appropriate to handle this in your use case
-		log.Errorf("Validation Error!")
+		panic(validationErr)
 	}
 
 	handler := func(w http.ResponseWriter, r *http.Request) {
+		score := r.URL.Query().Get("score")
+		i, err := strconv.Atoi(score)
+		if err != nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "Score must be a number, but %v\n", score)
+		}
+
 		testData := TestType{
 			EventType:    "HelloEvent",
-			AwesomeScore: rand.Intn(100),
+			AwesomeScore: i,
 		}
 		log.Debug(testData)
 
